@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Decentralized Election System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+  .buttonload {
+    background-color: #04AA6D;
+    /* Green background */
+    border: none;
+    /* Remove borders */
+    color: white;
+    /* White text */
+    padding: 12px 24px;
+    /* Some padding */
+    font-size: 16px;
+    /* Set a font-size */
+  }
+
+  /* Add a right margin to each icon */
+  .fa {
+    margin-left: -12px;
+    margin-right: 8px;
+  }
+
+  .alert {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+  }
+
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .closebtn:hover {
+    color: black;
+  }
+</style>
+
+<body style="text-align: center;">
+
+  <div class="container">
+    <h1 style="margin-top: 50px; margin-bottom: 20px;">Decentralized Election System</h1>
+
+
+    <h3 style="margin-top: 40px; margin-bottom: 5px; text-align: left;">Constituency: <span style="color: #950397;">Kishoreganj - 2</span></h3>
+    <h3 style="margin-top: 20px; margin-bottom: 35px; text-align: left;">Voting Centre: <span style="color: #950397;">Gurudoyal Govt. College</span></h3>
+
+    <form class="row g-3 mb-3" style="margin-top: 35px;">
+      <div class="col-auto">
+        <label for="staticEmail2" class="visually-hidden">NID No. of the Voter</label>
+        <input type="text" readonly class="form-control-plaintext" id="staticEmail2" value="NID No. of the Voter">
+      </div>
+      <div class="col-auto">
+        <input type="text" id="voterSearch" class="form-control" id="inputPassword2" placeholder="123 456 7891">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn mb-3" style="background-color: #950397; color: white;" onclick="getVoterDetails()">Check Info</button>
+      </div>
+    </form>
+
+    <table id="voterData" class="table" style="background-color: #950397;  color: white;">
+      <tr>
+        <td><b><i>Name</i></b></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><b><i>NID No.</i></b></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><b><i>Age</i></b></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><b><i>Sex</i></b></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><b><i>Voting Constituency</i></b></td>
+        <td>Kishoreganj - 2</td>
+      </tr>
+      <tr>
+        <td><b><i>Alloted Voting Centre</i></b></td>
+        <td>Gurudoyal Govt. College</td>
+      </tr>
+    </table>
+
+    <form class="row g-3 mb-3" style="margin-top: 35px;">
+      <div class="col-auto"  style="padding-top: 5px;">
+        <label for="staticEmail2">Allow the Voter to vote if the information match</label>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn mb-3" style="background-color: #950397; color: white;">Allow</button>
+      </div>
+    </form>
+
+
+
+    <button type="button" onclick="generateReport()" style="margin-bottom: 10px; float: right; display: block;" class="btn btn-success">
+      🖨️ Generate Report
+    </button>
+    <div class="alert" style="clear:both;" id="alert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">
+        &times; </span>
+      <strong> Stop! </strong> You have already voted.
+    </div>
+    <table class="table table-striped" id="showCandiateCount"></table>
+    <div id="id"></div>
+    <i id="test1">Loading...</i>
+
+  </div>
+  <!-- Button trigger modal Add Candidate-->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+    + Add Candidate
+  </button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Add Candidate</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="">
+          <div class="modal-body">
+            <div class="form-group">
+              <label style="text-align: left; display: block;"> Name </label>
+              <input type="text" name="name" id="name" class="form-control" placeholder="Enter Name" required>
+            </div>
+            <br>
+            <div class="form-group">
+              <label style="text-align: left; display: block;"> Age </label>
+              <input type="number" name="age" id="age" class="form-control" placeholder="Enter Age" required>
+            </div>
+            <br>
+            <div class="form-group">
+              <label style="text-align: left; display: block;"> Sex </label>
+              <select name="sex" class="form-select" id="sex" class="form-select" aria-label="Default select example" required>
+                <option selected value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+
+            </div>
+            <br>
+            <label for="Seat No" style="text-align: left; display: block;">Seat No</label>
+            <select id="status" class="form-control" name="status">
+              <option value="Dhaka-1">Dhaka - 1</option>
+              <option value="Dhaka-2">Dhaka - 2</option>
+              <option value="Mymensingh">Mymensingh - 1</option>
+              <option value="Kishoreganj">Kishoreganj - 1</option>
+              <option value="Netrokona">Netrokona - 1</option>
+            </select>
+            <br>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" id="add" class="btn btn-primary btn-add"><i id="save"></i>Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    var contract;
+    var account;
+    var items = [];
+    $(document).ready(function() {
+      document.getElementById("alert").style.display = "none";
+      web3 = new Web3(ethereum);
+
+      var address = "0xaeb1ce4250e323bc56cf48c53c13b0ea237c5cb9";
+      var abi = [{
+          "constant": true,
+          "inputs": [{
+            "name": "_address",
+            "type": "address"
+          }],
+          "name": "showStatus",
+          "outputs": [{
+            "name": "",
+            "type": "uint256"
+          }],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [{
+            "name": "",
+            "type": "uint256"
+          }],
+          "name": "candidates",
+          "outputs": [{
+              "name": "_id",
+              "type": "uint256"
+            },
+            {
+              "name": "_name",
+              "type": "string"
+            },
+            {
+              "name": "age",
+              "type": "uint256"
+            },
+            {
+              "name": "sex",
+              "type": "string"
+            },
+            {
+              "name": "candidateVotes",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": false,
+          "inputs": [{
+            "name": "index",
+            "type": "uint256"
+          }],
+          "name": "castVote",
+          "outputs": [],
+          "payable": true,
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "manager",
+          "outputs": [{
+            "name": "",
+            "type": "address"
+          }],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [{
+            "name": "",
+            "type": "address"
+          }],
+          "name": "status",
+          "outputs": [{
+            "name": "",
+            "type": "uint256"
+          }],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "candidateCount",
+          "outputs": [{
+            "name": "",
+            "type": "uint256"
+          }],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": false,
+          "inputs": [{
+              "name": "_name",
+              "type": "string"
+            },
+            {
+              "name": "_age",
+              "type": "uint256"
+            },
+            {
+              "name": "_sex",
+              "type": "string"
+            }
+          ],
+          "name": "addCandidateButton",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [{
+            "name": "_id",
+            "type": "uint256"
+          }],
+          "name": "showCount",
+          "outputs": [{
+            "name": "",
+            "type": "uint256"
+          }],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        }
+      ];
+
+      contract = new web3.eth.Contract(abi, address);
+
+      var accounts = window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+      web3.eth.getAccounts().then(function async (accounts) {
+        account = accounts[0];
+        if (account) {
+          $("#id").append(
+            '<h6 style="margin-top: 30px; text-align:center">Logged in as:   ' + account + '</h6>'
+          );
+        }
+
+        contract.methods
+        .manager()
+        .call()
+        .then(function(manager_id){
+          if(manager_id==account)
+          {
+            ec();
+          }
+        });
+      });
+
+    
+
+      function ec(){
+      contract.methods
+        .candidateCount()
+        .call()
+        .then(function(count) {
+          $("#showCandiateCount").append(
+            '<tr><th scope="col" style="text-align: left;">Name of Candidate</th><th scope="col">Total Votes</th><th scope="col"></th></tr>'
+          );
+          const candiateList = Array(parseInt(count))
+            .fill()
+            .map((element, index) => {
+              return contract.methods
+                .candidates(index)
+                .call()
+                .then(function(tx) {
+                  console.log(tx);
+                  items.push(tx);
+                  if (items.length == count) {
+                    var item = items.sort((a, b) => parseInt(a._id) - parseInt(b._id));
+
+                    for (var i = 0; i < item.length; i++) {
+                      $("#showCandiateCount").append(
+                        '<tr class="abc"><td style="text-align: left;">' + item[i]._name + '</td><td>' + item[i].candidateVotes +
+                        '</td><td><button type="button" id="' + item[i]._id + '" class="btn vote" style="background-color: #950397; color: white"><i id="test" class="test"></i>Vote</button></li></td></tr>'
+                      );
+                    }
+
+                  }
+                })
+                .catch(function(tx) {
+                  console.log(tx);
+                });
+            });
+          document.getElementById("test1").remove();
+          checkStatus(account);
+
+          $('form').on('submit', function(e) {
+            // validation code here
+            e.preventDefault();
+            var x = document.getElementById('save');
+            var elems = document.getElementsByClassName("btn-add");
+            for (var i = 0; i < elems.length; i++) {
+              elems[i].disabled = true;
+              x.classList.add('fa');
+              x.classList.add('fa-spinner');
+              x.classList.add('fa-spin');
+              if (account) {
+                addCandidate();
+              }
+            }
+          });
+        });
+      }
+    });
+
+
+    $('#showCandiateCount').on('click', ".btn", function() {
+      var txt = $(this).attr('id');
+      console.log(txt);
+      if (account) {
+        initializeVote(txt);
+      }
+    });
+
+
+
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF'.split('');
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+
+    function getVoterDetails(){
+      var id=document.getElementById("voterSearch").value;
+      document.getElementById("voterSearch").value="";
+      contract.methods
+        .candidates(id)
+        .call()
+        .then(function(tx) {
+          if(tx._name){
+            document.getElementById('voterData').rows[0].cells[1].innerHTML=tx._name;
+            document.getElementById('voterData').rows[1].cells[1].innerHTML=tx._id;
+            document.getElementById('voterData').rows[2].cells[1].innerHTML=tx.age;
+            document.getElementById('voterData').rows[3].cells[1].innerHTML=tx.sex;
+          }
+          else
+          {
+            document.getElementById('voterData').rows[0].cells[1].innerHTML='Not Found';
+            document.getElementById('voterData').rows[1].cells[1].innerHTML='Not Found';
+            document.getElementById('voterData').rows[2].cells[1].innerHTML='Not Found';
+            document.getElementById('voterData').rows[3].cells[1].innerHTML='Not Found';
+          }
+        })
+        .catch(function(tx) {
+          document.getElementById('voterData').rows[0].cells[1].innerHTML='Not Found';
+          document.getElementById('voterData').rows[1].cells[1].innerHTML='Not Found';
+          document.getElementById('voterData').rows[2].cells[1].innerHTML='Not Found';
+          document.getElementById('voterData').rows[3].cells[1].innerHTML='Not Found';
+        });
+
+    }
+
+
+    // generate Report
+    function generateReport() {
+      console.log(items); //Here lies all the candidate details, only need to generate report by indexing candidates
+      var names = [];
+      var age = [];
+      var color = [];
+      var votes = [];
+      var nameage = [];
+      var mywindow = window.open('', 'new div', 'height=400,width=600');
+      mywindow.document.write('<html><head><title></title>');
+      mywindow.document.write('<link rel="stylesheet" href="css/midday_receipt.css" type="text/css" />');
+      mywindow.document.write(`<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>`);
+      mywindow.document.write('</head><body>');
+      //mywindow.document.write(`kire${items[0]._name}`);
+      var mx = items[0].candidateVotes,
+        mxi, s = 0;
+      for (let i = 0; i < items.length; ++i) {
+        names.push(String(items[i]._name));
+        age.push(parseInt(items[i].age));
+        color.push(String(getRandomColor()));
+        votes.push(parseInt(items[i].candidateVotes));
+        nameage.push(items[i]._name + '_' + String(items[i].age));
+        mywindow.document.write(`${items[i]._name} ${items[i].candidateVotes}<br>`);
+        s += Number(items[i].candidateVotes);
+        if (mx <= items[i].candidateVotes) {
+          mx = items[i].candidateVotes;
+          mxi = i;
+        }
+      }
+
+
+      names = "'" + names.join("','") + "'";
+      color = "'" + color.join("','") + "'";
+      nameage = "'" + nameage.join("','") + "'";
+
+
+
+      mywindow.document.write(`<br><br>Total voters so far: ${s}`);
+      if (items[mxi].candidateVotes != 0) {
+        mywindow.document.write(`<br><br><br>Leading so far: ${items[mxi]._name}`);
+      }
+      mywindow.document.write(`<br><br>This is the state of the result at: ${new Date()}`);
+      mywindow.document.write(`<canvas id="myChart2" width="400" height="400"><\/canvas>`);
+      mywindow.document.write(`<canvas id="myChart1" width="400" height="400"><\/canvas>`);
+      mywindow.document.write(`<script>
+      var ctx2 = document.getElementById('myChart2').getContext('2d');
+      new Chart(ctx2, {
+          type: 'pie',
+          data: {
+              labels: [${names}],
+              datasets: [
+                {
+                backgroundColor: [${color}],
+                data: [${votes}]
+              }
+              ]
+      		},
+          options: {
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: 'Vote Count Chart'
+              }
+            }
+          }
+        }
+      });
+    <\/script>`);
+
+      mywindow.document.write(`<script>
+    var ctx = document.getElementById('myChart1').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [${nameage}],
+            datasets: [
+              {
+                label: [${nameage}],
+                backgroundColor: [${color}],
+                data: [${votes}]
+              }
+            ],
+            borderWidth: 1,
+            datalabels: {
+              color: 'blue',
+              anchor: 'end'
+            }
+        },
+        options: {
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: '# of Votes'
+            }
+          }
+        }
+      }
+    });
+  <\/script>`);
+
+      mywindow.document.write('</body></html>');
+      mywindow.document.close();
+      mywindow.focus();
+      setTimeout(function() {
+        mywindow.print();
+      }, 1000);
+    }
+
+
+    // Add candidate through modal
+    function addCandidate() {
+      var name = document.getElementById('name').value;
+      var age = document.getElementById('age').value;
+      var sex = document.getElementById('sex').value;
+      web3.eth.getAccounts().then(function(accounts) {
+        var account = accounts[0];
+        console.log(accounts);
+        return contract.methods.addCandidateButton(name, age, sex).send({
+          from: account
+        }).then(function(tx) {
+          console.log(tx);
+          window.location.reload(true);
+        }).catch(function(tx) {
+          console.log(tx);
+          window.location.reload(true);
+        });
+      });
+    }
+
+
+    function initializeVote(index) {
+      var x = document.getElementsByClassName('test');
+      var elems = document.getElementsByClassName("vote");
+      for (var i = 0; i < elems.length; i++) {
+        elems[i].disabled = true;
+      }
+      for (var i = 0; i < x.length; i++) {
+        if (i == index) {
+          console.log(i);
+          x[i].classList.add('fa');
+          x[i].classList.add('fa-spinner');
+          x[i].classList.add('fa-spin');
+        }
+      }
+      web3.eth.getAccounts().then(function(accounts) {
+        var account = accounts[0];
+        console.log(accounts);
+        checkVoted(account);
+        return contract.methods.castVote(index).send({
+          from: account
+        }).then(function(tx) {
+          console.log(tx);
+          for (var i = 0; i < x.length; i++) {
+            if (i == index) {
+              console.log(i);
+              x[i].classList.remove('fa');
+              x[i].classList.remove('fa-spinner');
+              x[i].classList.remove('fa-spin');
+            }
+          }
+          for (var i = 0; i < elems.length; i++) {
+            elems[i].disabled = false;
+          }
+          window.location.reload(true);
+        }).catch(function(tx) {
+          for (var i = 0; i < x.length; i++) {
+            if (i == index) {
+              console.log(i);
+              x[i].classList.remove('fa');
+              x[i].classList.remove('fa-spinner');
+              x[i].classList.remove('fa-spin');
+            }
+          }
+          for (var i = 0; i < elems.length; i++) {
+            elems[i].disabled = false;
+          }
+          console.log(tx);
+        });
+      });
+    }
+
+
+    function checkVoted(index) {
+      web3.eth.getAccounts().then(function(accounts) {
+        var account = accounts[0];
+        var elems = document.getElementsByClassName("vote");
+        contract.methods.showStatus(account).call().then(function(tx) {
+          if (tx == 1) {
+            document.getElementById("alert").style.display = "block";
+            var x = document.getElementsByClassName('test');
+            for (var i = 0; i < x.length; i++) {
+              if (i == index) {
+                console.log(i);
+                elems[i].style.display = "none";
+              }
+            }
+          }
+        });
+      });
+    }
+
+    function checkStatus(account) {
+      var elems = document.getElementsByClassName("vote");
+      contract.methods.showStatus(account).call().then(function(tx) {
+        if (tx == 1) {
+          document.getElementById("alert").style.display = "block";
+          for (var i = 0; i < elems.length; i++) {
+            elems[i].style.display = "none";
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

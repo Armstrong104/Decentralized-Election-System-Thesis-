@@ -1,0 +1,7 @@
+1. Install ipfs desktop for windows from ipfs website
+2. then run the ipfs application 
+3. Go to files section in the app and import files or folders you want in the ipfs network
+4. After importing files/folders click the three dot icon beside it and click copy CDI(Content Identifier)
+5. Next, go to browser and type http://localhost:8080/ipfs/copied cdi
+6. finally, you can find the files/folder that you have uploaded in the ipfs network.
+7. Thank you. 
